@@ -21,17 +21,10 @@
  */
 require_once('Auth/PrefManager2/Container.php');
 
-/**#@+
- * Error codes
+/**
+ * Require PEAR DB for data management.
  */
-define('AUTH_PREFMANAGER2_DB_NO_DSN', -3);
-define('AUTH_PREFMANAGER2_DB_CONNECT_FAILED', -4);
-define('AUTH_PREFMANAGER2_DB_QUERY_FAILED', -5);
-/**#@-*/
-
-$_GLOBALS['_Auth_PrefManager2']['err'][AUTH_PREFMANAGER2_DB_NO_DSN] = 'You must provide a DSN to connect to.';
-$_GLOBALS['_Auth_PrefManager2']['err'][AUTH_PREFMANAGER2_DB_CONNECT_FAILED] = 'A connection couldn\'t be established with the database.';
-$_GLOBALS['_Auth_PrefManager2']['err'][AUTH_PREFMANAGER2_DB_QUERY_FAILED] = 'A database query failed.';
+require_once('DB.php');
 
 /**
  * The PEAR DB container for Auth_PrefManager2
@@ -49,7 +42,13 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
      * @var DB
      */
     var $_db = null;
-        
+       
+    function Auth_PrefManager2_Container_DB($options = array())
+    {
+        $this->Auth_PrefManager2_Container($options);
+        return $this->_connect();
+    }
+    
     /**
      * Sets a value with the container.
      *
@@ -69,23 +68,23 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
                              $this->_options['value_column'],
                              $this->_encodeValue($value),
                              $this->_options['owner_column'],
-                             DB::quoteSmart($owner),
+                             $this->_db->quoteSmart($owner),
                              $this->_options['preference_column'],
-                             DB::quoteSmart($preference),
+                             $this->_db->quoteSmart($preference),
                              $this->_options['application_column'],
-                             DB::quoteSmart($application));
+                             $this->_db->quoteSmart($application));
         } else {
             // Otherwise insert a new row.
-            $query = sprintf('INSERT INTO %s (%s, %s, %s, %s) VALUES(%s, %s, %s, %s)'
+            $query = sprintf('INSERT INTO %s (%s, %s, %s, %s) VALUES(%s, %s, %s, %s)',
                              $this->_options['table'],
                              $this->_options['value_column'],
                              $this->_options['owner_column'],
                              $this->_options['preference_column'],
                              $this->_options['application_column'],
                              $this->_encodeValue($value),
-                             DB::quoteSmart($owner),
-                             DB::quoteSmart($preference),
-                             DB::quoteSmart($application));
+                             $this->_db->quoteSmart($owner),
+                             $this->_db->quoteSmart($preference),
+                             $this->_db->quoteSmart($application));
         }
         
         $result = $this->_runQuery($query);
@@ -113,14 +112,14 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
         if ($this->_exists($owner, $preference, $application)) {
             // If the preference already exists update its value.
             $query = sprintf('SELECT %s FROM %s WHERE %s=%s AND %s=%s AND %s=%s',
-                             $this->_options['value_column',
+                             $this->_options['value_column'],
                              $this->_options['table'],
                              $this->_options['owner_column'],
-                             DB::quoteSmart($owner),
+                             $this->_db->quoteSmart($owner),
                              $this->_options['preference_column'],
-                             DB::quoteSmart($preference),
+                             $this->_db->quoteSmart($preference),
                              $this->_options['application_column'],
-                             DB::quoteSmart($application));
+                             $this->_db->quoteSmart($application));
         } else {
             return null;
         }
@@ -152,11 +151,11 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
             $query = sprintf('DELETE FROM %s WHERE %s=%s AND %s=%s AND %s=%s',
                              $this->_options['table'],
                              $this->_options['owner_column'],
-                             DB::quoteSmart($owner),
+                             $this->_db->quoteSmart($owner),
                              $this->_options['preference_column'],
-                             DB::quoteSmart($preference),
+                             $this->_db->quoteSmart($preference),
                              $this->_options['application_column'],
-                             DB::quoteSmart($application));
+                             $this->_db->quoteSmart($application));
         } else {
             // Should this be returning true, since the value is no longer
             // there, or false, because no delete has been done?
@@ -190,11 +189,11 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
                          $this->_options['owner_column'],
                          $this->_options['table'],
                          $this->_options['owner_column'],
-                         DB::smartQuote($owner),
+                         $this->_db->quoteSmart($owner),
                          $this->_options['preference_column'],
-                         DB::smartQuote($preference),
+                         $this->_db->quoteSmart($preference),
                          $this->_options['application_column'],
-                         DB::smartQuote($application));
+                         $this->_db->quoteSmart($application));
                          
         $result = $this->_runQuery($query);
         
@@ -246,7 +245,7 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
         if (!is_null($this->_db)) {
             $result = $this->_db->query($query);
             if (DB::isError($result)) {
-                $this->_throwError(AUTH_PREFMANAGER2_DB_QUERY_FAILED. 'error', array('query' => $query), $result);
+                $this->_throwError(AUTH_PREFMANAGER2_DB_QUERY_FAILED, 'error', array('query' => $query), $result);
                 return null;
             }
             
@@ -281,7 +280,7 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
      */
     function _decodeValue($value)
     {
-        return parent::_decodeValue($value)
+        return parent::_decodeValue($value);
     }
     
     /**
