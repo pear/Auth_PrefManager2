@@ -21,7 +21,6 @@
  * Require Auth_PrefManager2 for testing.
  */
 require_once('Auth/PrefManager2.php');
-require_once('support/MockContainer.php');
 
 /**
  * Test cases to ensure that the factory and singleton methods work.
@@ -48,12 +47,11 @@ class CreationTests extends UnitTestCase
      *
      * @access public
      * @return void
-     * @todo Switch to using a full container once one is done.
      */
     function testFactory()
     {
-        $object =& Auth_PrefManager2::factory("Mock");
-        $this->assertIsA($object, "Auth_PrefManager2_Mock");
+        $object =& Auth_PrefManager2::factory("Array");
+        $this->assertIsA($object, "Auth_PrefManager2_Container_Array");
     }
     
     /**
@@ -65,8 +63,8 @@ class CreationTests extends UnitTestCase
      */
     function testSingleton()
     {
-        $object =& Auth_PrefManager2::singleton("Mock");
-        $reference =& Auth_PrefManager2::singleton("Mock");   
+        $object =& Auth_PrefManager2::singleton("Array");
+        $reference =& Auth_PrefManager2::singleton("Array");   
         
         $this->assertReference($object, $reference);
     }
