@@ -66,7 +66,7 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
             $query = sprintf('UPDATE %s SET %s=%s WHERE %s=%s AND %s=%s AND %s=%s',
                              $this->_options['table'],
                              $this->_options['value_column'],
-                             $this->_encodeValue($value),
+                             $this->_db->quoteSmart($value),
                              $this->_options['owner_column'],
                              $this->_db->quoteSmart($owner),
                              $this->_options['preference_column'],
@@ -81,7 +81,7 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
                              $this->_options['owner_column'],
                              $this->_options['preference_column'],
                              $this->_options['application_column'],
-                             $this->_encodeValue($value),
+                             $this->_db->quoteSmart($value),
                              $this->_db->quoteSmart($owner),
                              $this->_db->quoteSmart($preference),
                              $this->_db->quoteSmart($application));
@@ -185,7 +185,7 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
      */
     function _exists($owner, $preference, $application)
     {
-        $query = sprintf('SELECT COUNT(%s) FROM $s WHERE %s=%s AND %s=%s AND %s=%s',
+        $query = sprintf('SELECT COUNT(%s) FROM %s WHERE %s=%s AND %s=%s AND %s=%s',
                          $this->_options['owner_column'],
                          $this->_options['table'],
                          $this->_options['owner_column'],
@@ -194,9 +194,9 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
                          $this->_db->quoteSmart($preference),
                          $this->_options['application_column'],
                          $this->_db->quoteSmart($application));
-                         
-        $result = $this->_runQuery($query);
+                         echo $query . "<br />";
         
+        $result = $this->_runQuery($query);
         if (!is_null($result)) {
             $count = $result->fetchRow();
             return (bool)$count[0];
@@ -253,34 +253,6 @@ class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
         }
         
         return null;
-    }
-    
-    /**
-     * Prepares a value for saving in the data container.
-     * Containers that override this method should always call
-     * parent::_encodeValue() to do serialization.
-     *
-     * @param mixed $value The value to prepare.
-     * @return mixed The prepared value.
-     * @access protected
-     */
-    function _encodeValue($value)
-    {
-        return parent::_encodeValue($value);
-    }
-    
-    /**
-     * Reverts any preparation that was done to store the value.
-     * Containers that override this method should always call 
-     * parent::_decodeValue() to do unserialization.
-     * 
-     * @param mixed $value The value to decode.
-     * @return mixed The unprepared value.
-     * @access protected
-     */
-    function _decodeValue($value)
-    {
-        return parent::_decodeValue($value);
     }
     
     /**
