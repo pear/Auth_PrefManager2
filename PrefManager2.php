@@ -103,15 +103,7 @@ class Auth_PrefManager2
     function Auth_PrefManager2($options = array())
     {
         $this->_errorStack =& PEAR_ErrorStack::singleton('Auth_PrefManager2');
-        
-        if (!isset($options['default_user'])) $options['default_user'] = 'default';
-        if (!isset($options['default_app'])) $options['default_app'] = 'default';
-        if (!isset($options['serialize'])) $options['serialize'] = true;
-        if (!isset($options['cache'])) $options['cache'] = true;
-        if (!isset($options['cache_key'])) $options['cache_key'] = '_prefmanager2';
-        if (!isset($options['debug'])) $options['debug'] = false;
-        
-        $this->_options = $options;
+        $this->_parseOptions($options);
     }
     
     /**
@@ -345,6 +337,46 @@ class Auth_PrefManager2
         }
     
         return $value;
+    }
+    
+    /**
+     * Reads the options array, and sets default values for anything
+     * which isn't set.
+     *
+     * Container classes should override this method, set any defaults
+     * that they need, and then pass the options to parent::_parseOptions().
+     *
+     * @param array $options An array of options.
+     * @return void
+     * @access protected
+     */
+    function _parseOptions($options)
+    {
+        if (!isset($options['default_user'])) {
+            $options['default_user'] = 'default';
+        }
+        
+        if (!isset($options['default_app'])) {
+            $options['default_app'] = 'default';
+        }
+        
+        if (!isset($options['serialize'])) {
+            $options['serialize'] = true;
+        }
+        
+        if (!isset($options['cache'])) {
+            $options['cache'] = true;
+        }
+        
+        if (!isset($options['cache_key'])) {
+            $options['cache_key'] = '_prefmanager2';
+        }
+        
+        if (!isset($options['debug'])) {
+            $options['debug'] = false;
+        }
+        
+        $this->_options = $options;
     }
     
     /**
