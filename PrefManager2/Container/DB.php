@@ -19,7 +19,19 @@
 /**
  * Require the core class.
  */
-require_once('Auth/PrefManager2.php');
+require_once('Auth/PrefManager2/Container.php');
+
+/**#@+
+ * Error codes
+ */
+define('AUTH_PREFMANAGER2_DB_NO_DSN', -3);
+define('AUTH_PREFMANAGER2_DB_CONNECT_FAILED', -4);
+define('AUTH_PREFMANAGER2_DB_QUERY_FAILED', -5);
+/**#@-*/
+
+$_GLOBALS['_Auth_PrefManager2']['err'][AUTH_PREFMANAGER2_DB_NO_DSN] = 'You must provide a DSN to connect to.';
+$_GLOBALS['_Auth_PrefManager2']['err'][AUTH_PREFMANAGER2_DB_CONNECT_FAILED] = 'A connection couldn\'t be established with the database.';
+$_GLOBALS['_Auth_PrefManager2']['err'][AUTH_PREFMANAGER2_DB_QUERY_FAILED] = 'A database query failed.';
 
 /**
  * The PEAR DB container for Auth_PrefManager2
@@ -28,7 +40,7 @@ require_once('Auth/PrefManager2.php');
  * @package Auth_PrefManager2
  * @category Authentication
  */
-class Auth_PrefManager2_DB extends Auth_PrefManager2
+class Auth_PrefManager2_Container_DB extends Auth_PrefManager2_Container
 {
     /**
      * The DB object being used for data access.
@@ -37,23 +49,7 @@ class Auth_PrefManager2_DB extends Auth_PrefManager2
      * @var DB
      */
     var $_db = null;
-    
-    /**
-     * Constructor
-     *
-     * Applications should never call this constructor directly, instead 
-     * create a container with the factory method.
-     *
-     * @access protected
-     * @param array $options An associative array of options.
-     * @return void
-     * @see Auth_PrefManager2::&factory()
-     */
-    function Auth_PrefManager2_DB($options = array())
-    {
-        $this->Auth_PrefManager2($options);
-    }
-    
+        
     /**
      * Sets a value with the container.
      *
