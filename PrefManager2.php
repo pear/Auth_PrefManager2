@@ -17,13 +17,17 @@
 //
 // $Id$
 
+/**
+ * Used for error handling.
+ */
 require_once('PEAR/ErrorStack.php');
 
-/**
+/**#@+
  * Error codes
  */
 define('AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND', -1);
 define('AUTH_PREFMANAGER2_NOT_IMPLEMENTED', -2);
+/**#@-*/
 
 /**
  * Auth_PrefManager allows you to store and retrieve preferences from
@@ -89,8 +93,9 @@ class Auth_PrefManager2
     
     /**
      * Constructor
-     * Applications should never call this constructor directly, instead create a container
-     * with the factory method.
+     *
+     * Applications should never call this constructor directly, instead 
+     * create a container with the factory method.
      *
      * @access protected
      * @param array $options An associative array of options.
@@ -115,11 +120,12 @@ class Auth_PrefManager2
      * Creates an instance of PrefManager, with the options specified, and data
      * access being done by the specified container.
      *
+     * @param string $container The container to use.
+     * @param array $options An associative array of options to pass to the 
+     *                       container.
+     * @return Auth_PrefManager2 A container, ready to use.
      * @access public
      * @static
-     * @param string $container The container to use.
-     * @param array $options An associative array of options to pass to the container.
-     * @return Auth_PrefManager2 A container, ready to use.
      * @throws AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND
      */
     function &factory($container, $options = array())
@@ -148,13 +154,15 @@ class Auth_PrefManager2
     
     /**
      * Returns a reference to an Auth_PrefManager2 object.
-     * A new object will only be created if one doesn't already exist with the same container and options.
+     *
+     * A new object will only be created if one doesn't already exist with the 
+     * same container and options.
      * 
-     * @access public
-     * @static
      * @param string $container The container to use.
      * @param array $options An associative array of options to pass to the container.
      * @return Auth_PrefManager2 A container, ready to use.
+     * @access public
+     * @static
      * @throws AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND
      */
     function &singleton($container, $options = array())
@@ -175,13 +183,14 @@ class Auth_PrefManager2
     /**
      * Gets a preference for the specified owner and application.
      *
-     * @access public
      * @param string $owner The owner to retrieve the preference for.
      * @param string $preference The name of the preference to retrieve.
-     * @param string $application The application to retrieve from, if left as null the default
-     *                            application ($options['default_app']) will be used.
-     * @param bool $returnDefaults Should a default value be returned if no user preference is available?
+     * @param string $application The application to retrieve from, if left as 
+     *                            null the default application will be used.
+     * @param bool $returnDefaults Should a default value be returned if no 
+     *                             user preference is available?
      * @return mixed|null The value, or null of no value was available.
+     * @access public
      */
     function getPref($owner, $preference, $application = null, $returnDefaults = true)
     {
@@ -201,11 +210,11 @@ class Auth_PrefManager2
     /**
      * Gets the default value for the specified preference.
      *
-     * @access public
      * @param string $preference The name of the preference to retrieve.
-     * @param string $application The application to retrieve from, if left as null the default
-     *                            application ($options['default_app']) will be used.
+     * @param string $application The application to retrieve from, if left as 
+     *                            null the default application will be used.
      * @return mixed|null The value, or null of no value was available.
+     * @access public
      */
     function getDefaultPref($preference, $application = null)
     {
@@ -219,13 +228,13 @@ class Auth_PrefManager2
     /**
      * Sets a preference for the specified owner and application.
      *
-     * @access public
      * @param string $owner The owner to retrieve the preference for.
      * @param string $preference The name of the preference to retrieve.
      * @param mixed $value The value to set the preference to.
-     * @param string $application The application to retrieve from, if left as null the default
-     *                            application ($options['default_app']) will be used.
+     * @param string $application The application to retrieve from, if left as 
+     *                            null the default application will be used.
      * @return bool Success/failure
+     * @access public
      */
     function setPref($owner, $preference, $value, $application = null)
     {
@@ -238,13 +247,13 @@ class Auth_PrefManager2
     
     /**
      * Gets the default value for the specified preference.
-     *
-     * @access public
+     * 
      * @param string $preference The name of the preference to set.
      * @param mixed $value The value to set to.
-     * @param string $application The application to set for, if left as null the default
-     *                            application ($options['default_app']) will be used.
+     * @param string $application The application to set for, if left as 
+     *                            null the default application will be used.
      * @return mixed|null The value, or null of no value was available.
+     * @access public
      */
     function setDefaultPref($preference, $value, $application = null)
     {
@@ -258,12 +267,12 @@ class Auth_PrefManager2
     /**
      * Deletes a preference for the specified owner and application.
      *
-     * @access public
      * @param string $owner The owner to delete the preference for.
      * @param string $preference The name of the preference to delete.
-     * @param string $application The application to delete from, if left as null the default
-     *                            application ($options['default_app']) will be used.
+     * @param string $application The application to delete from, if left as 
+     *                            null the default application will be used.
      * @return bool Success/failure
+     * @access public
      */
     function deletePref($owner, $preference, $application = null)
     {
@@ -277,11 +286,11 @@ class Auth_PrefManager2
     /**
      * Deletes a preference for the default user.
      *
-     * @access public
      * @param string $preference The preference to delete.
-     * @param string $application The application to delete from, if left as null the default
-     *                            application ($options['default_app']) will be used.
+     * @param string $application The application to delete from, if left as
+     *                            null the default application will be used.
      * @return bool Success/failure
+     * @access public
      */
     function deleteDefaultPref($preference, $application = null)
     {
@@ -295,12 +304,15 @@ class Auth_PrefManager2
     
     /**
      * Sets a value with the container.
-     * This method should be overridden by container classes to do whatever needs doing.
-     * @access protected
+     * This method should be overridden by container classes to do whatever 
+     * needs doing.
+     *
      * @param string $owner The owner to set the preference for.
      * @param string $preference The name of the preference to set.
      * @param string $application The application to set for.
      * @return bool Success/failure
+     * @access protected
+     * @abstract
      */
     function _set($owner, $preference, $value, $application)
     {
@@ -310,13 +322,16 @@ class Auth_PrefManager2
     
     /**
      * Gets a value from the container.
-     * This method should be overridden by container classes to do whatever needs doing.
-     * @access protected
+     * This method should be overridden by container classes to do whatever 
+     * needs doing.
+     *
      * @param string $owner The owner to set the preference for.
      * @param string $preference The name of the preference to set.
      * @param mixed $value The value to set the preference to.
      * @param string $application The application to set for.
      * @return bool Success/failure
+     * @access protected
+     * @abstract
      */
     function _get($owner, $preference, $application)
     {
@@ -326,12 +341,15 @@ class Auth_PrefManager2
     
     /**
      * Deletes a value from the container.
-     * This method should be overridden by container classes to do whatever needs doing.
-     * @access protected
+     * This method should be overridden by container classes to do whatever 
+     * needs doing.
+     *
      * @param string $owner The owner to delete the preference for.
      * @param string $preference The name of the preference to delete.
      * @param string $application The application to delete from.
      * @return bool Success/failure
+     * @access protected
+     * @abstract
      */
     function _delete($owner, $preference, $application)
     {
@@ -341,14 +359,14 @@ class Auth_PrefManager2
     
     /**
      * Prepares a value for saving in the data container.
-     * Containers that override this method should always call parent::_prepareValue()
-     * to do serialization.
+     * Containers that override this method should always call
+     * parent::_encodeValue() to do serialization.
      *
-     * @access protected
      * @param mixed $value The value to prepare.
      * @return mixed The prepared value.
+     * @access protected
      */
-    function _prepareValue($value)
+    function _encodeValue($value)
     {
         if ($this->_options['serialize']) {
             return serialize($value);
@@ -359,14 +377,14 @@ class Auth_PrefManager2
     
     /**
      * Reverts any preparation that was done to store the value.
-     * Containers that override this method should always call parent::_unprepareValue()
-     * to do unserialization.
+     * Containers that override this method should always call 
+     * parent::_decodeValue() to do unserialization.
      * 
-     * @access protected
-     * @param mixed $value The value to unprepare.
+     * @param mixed $value The value to decode.
      * @return mixed The unprepared value.
+     * @access protected
      */
-    function _unprepareValue($value)
+    function _decodeValue($value)
     {
         if ($this->_options['serialize']) {
             return unserialize($value);
@@ -378,11 +396,11 @@ class Auth_PrefManager2
     /**
      * Throws an error, using the current locale if it exists, or en if it doesn't.
      * 
-     * @access protected
      * @param int $code The error code.
      * @param string $level The level of the error.
      * @param array $params Any other information to include with the error.
      * @return void
+     * @access protected
      */
     function _throwError($code, $level = 'error', $params = array())
     {
