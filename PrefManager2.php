@@ -134,7 +134,7 @@ class Auth_PrefManager2
         
         if (class_exists($class)) {
             $obj =& new $class($options);
-            return $obj
+            return $obj;
         } else {
             if ($options['debug']) {
                 $include = include_once($file);
@@ -146,7 +146,7 @@ class Auth_PrefManager2
                 $class = "Auth_PrefManager2_${container}";
                 if (class_exists($class)) {
                     $obj =& new $class($options);
-                    return $obj
+                    return $obj;
                 }
             }
         }
