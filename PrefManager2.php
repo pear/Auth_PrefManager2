@@ -9,16 +9,22 @@ require_once('PEAR/ErrorStack.php');
  */
 define('AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND', -1);
 define('AUTH_PREFMANAGER2_NOT_IMPLEMENTED', -2);
+define('AUTH_PREFMANAGER2_DB_NO_DSN', -3);
+define('AUTH_PREFMANAGER2_DB_CONNECT_FAILED', -4);
+define('AUTH_PREFMANAGER2_DB_QUERY_FAILED', -5);
 /**#@-*/
 
 /**
 * Internationalised error messages
 */
-if (! isset($GLOBALS['_Auth_PrefManager2']['err'])) {
+if (!isset($GLOBALS['_Auth_PrefManager2']['err'])) {
     $GLOBALS['_Auth_PrefManager2']['err'] = array(
         'en' => array(
             AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND => 'The container you requested could not be loaded.',
-            AUTH_PREFMANAGER2_NOT_IMPLEMENTED => 'This container doesn\'t implement this method.'
+            AUTH_PREFMANAGER2_NOT_IMPLEMENTED => 'This container doesn\'t implement this method.',
+            AUTH_PREFMANAGER2_DB_NO_DSN => 'You must provide a DSN to connect to.',
+            AUTH_PREFMANAGER2_DB_CONNECT_FAILED => 'The database connection couldn\'t be established.',
+            AUTH_PREFMANAGER2_DB_QUERY_FAILED => 'A database query failed.'
         )
     );
 }
@@ -88,7 +94,7 @@ class Auth_PrefManager2
         }
         
         // Something went wrong if we havn't returned by now.
-        $this->_throwError(AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND,
+        Auth_PrefManager2::_throwError(AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND,
                           'error',
                           array('container' => $container,
                                 'options' => $options));
@@ -132,13 +138,14 @@ class Auth_PrefManager2
      */
     function _throwError($code, $level = 'error', $params = array(), $repackage = null)
     {
-        $locale = isset($this->_errorMessages['_Auth_PrefManager2'][$this->locale]) ? $this->locale : 'en';
-        
-        $this->_errorStack->push($code, 
-                                 'notice',
-                                 array('name' => $name,
-                                       'value' => $value),
-                                 $GLOBALS['_Auth_PrefManager2'][$locale][$code]);
+        //$locale = isset($this->_errorMessages['_Auth_PrefManager2']['en']) ? $this->locale : 'en';
+        $locale = 'en';
+        PEAR_ErrorStack::staticPush('Auth_PrefManager2',
+                                    $code, 
+                                    $level,
+                                    $params,
+                                    $GLOBALS['_Auth_PrefManager2']['err'][$locale][$code],
+                                    $repackage);
     }
 }
 ?>
