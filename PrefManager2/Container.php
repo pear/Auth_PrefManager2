@@ -1,4 +1,5 @@
 <?php
+require_once('Auth/PrefManager2.php');
 
 class Auth_PrefManager2_Container {
 
@@ -31,7 +32,7 @@ class Auth_PrefManager2_Container {
      * @return void
      * @see Auth_PrefManager2::&factory()
      */
-    function Auth_PrefManager2_Common($options = array())
+    function Auth_PrefManager2_Container($options = array())
     {
         $this->_errorStack =& PEAR_ErrorStack::singleton('Auth_PrefManager2');
         $this->_parseOptions($options);
@@ -62,7 +63,7 @@ class Auth_PrefManager2_Container {
         if (!is_null($value = $this->_get($owner, $preference, $application))) {
             return $this->_decodeValue($value);
         } else {
-            if ($returnDefaults && $options['return_defaults']) {
+            if ($returnDefaults && $this->_options['return_defaults'] && ($owner != $this->_options['default_app'])) {
                 return $this->getPref($preference, null, $application);
             }
         }
@@ -112,7 +113,7 @@ class Auth_PrefManager2_Container {
             $application = $this->_options['default_app'];
         }
         
-        return $this->_delete($owner, $preference, $application = null);
+        return $this->_delete($owner, $preference, $application);
     }
     
     /**
@@ -239,8 +240,8 @@ class Auth_PrefManager2_Container {
      */
     function _parseOptions($options)
     {
-        if (!isset($options['default_user'])) {
-            $options['default_user'] = 'default';
+        if (!isset($options['default_owner'])) {
+            $options['default_owner'] = 'default';
         }
         
         if (!isset($options['default_app'])) {
@@ -267,6 +268,10 @@ class Auth_PrefManager2_Container {
             $options['locale'] = 'en';
         }
         
+        if (!isset($options['return_defaults'])) {
+            $options['return_defaults'] = true;
+        }
+        
         $this->_options = $options;
     }
     
@@ -284,12 +289,12 @@ class Auth_PrefManager2_Container {
         $locale = isset($this->_errorMessages['_Auth_PrefManager2'][$this->_options['locale']])
             ? $this->_options['locale']
             : 'en';
-        
-        $this->_errorStack->push($code, 
-                                 'notice',
-                                 array('name' => $name,
-                                       'value' => $value),
-                                 $GLOBALS['_Auth_PrefManager2'][$locale][$code]);
+            
+        var_dump($this->_errorStack->push($code, 
+                                 $level,
+                                 $params,
+                                 $GLOBALS['_Auth_PrefManager2']['err'][$locale][$code],
+                                 $repackage));
     }
 
 }
