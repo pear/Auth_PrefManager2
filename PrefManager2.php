@@ -110,6 +110,9 @@ class Auth_PrefManager2
      * Creates an instance of PrefManager, with the options specified, and data
      * access being done by the specified container.
      *
+     * If your using a custom container you can include it before calling
+     * the factory method and it will be used without any further setup.
+     *
      * @param string $container The container to use.
      * @param array $options An associative array of options to pass to the 
      *                       container.
@@ -120,18 +123,23 @@ class Auth_PrefManager2
      */
     function &factory($container, $options = array())
     {
+        $class = "Auth_PrefManager2_${container}";
         $file = "Auth/PrefManager2/${container}.php";
-
-        if ($options['debug']) {
-            $include = include_once($file);
-        } else {
-            $include = @include_once($file);
-        }
         
-        if ($include) {
-            $class = "Auth_PrefManager2_${container}";
-            if (class_exists($class)) {
-                return new $class($options);
+        if (class_exists($class)) {
+            return new $class($options);
+        } else {
+            if ($options['debug']) {
+                $include = include_once($file);
+            } else {
+                $include = @include_once($file);
+            }
+            
+            if ($include) {
+                $class = "Auth_PrefManager2_${container}";
+                if (class_exists($class)) {
+                    return new $class($options);
+                }
             }
         }
         
