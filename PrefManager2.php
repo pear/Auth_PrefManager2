@@ -172,7 +172,7 @@ class Auth_PrefManager2
         
         $key = serialize(array($container, $options));
         if (!isset($instances[$key])) {
-            $instances[$key] =& Auth_PrefManager2::singleton($container, $options);
+            $instances[$key] =& Auth_PrefManager2::factory($container, $options);
         }
         
         return $instances[$key];
