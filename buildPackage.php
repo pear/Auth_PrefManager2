@@ -4,13 +4,17 @@ $fm = new PEAR_PackageFileManager();
 $options = array(
                 'packagefile' => 'package.xml',
                 'state' => 'alpha',
-                'version' => '0.1',
-                'notes' => 'Development snapshot, not for production use.',
+                'version' => '2.0.0dev1',
+                'notes' => 'Initial development release.',
                 'filelistgenerator' => 'cvs',
                 'baseinstalldir' => 'Auth',
                 'package' => 'Auth_PrefManager2',
-                'summary' => 'summary goes here',
-                'description' => 'description',
+                'summary' => 'Preferences management class',
+                'description' => 'Preference Manager is a class to handle user preferences in a web application, looking them up in a table
+using a combination of their userid, and the preference name to get a value, and (optionally) returning
+a default value for the preference if no value could be found for that user.
+
+Auth_PrefManager2 supports data containers to allow reading/writing with different sources, currently PEAR DB and a simple array based container are supported, although support is planned for an LDAP container as well. If you don\'t need support for different sources, or setting preferences for multiple applications you should probably use Auth_PrefManager instead.',
                 'doctype' => 'http://pear.php.net/dtd/package-1.0',
                 'packagedirectory' => '/home/jon/pear/Auth_PrefManager2/',
                 'license' => 'PHP License',
