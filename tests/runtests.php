@@ -36,5 +36,6 @@ require_once('simpletest/reporter.php');
 
 $test = &new GroupTest('All tests');
 $test->addTestFile('CreationTests.php');
+$test->addTestFile('CommonTests.php');
 $test->run(new TextReporter());
 ?>
