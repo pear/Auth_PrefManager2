@@ -27,6 +27,9 @@ require_once('PEAR/ErrorStack.php');
  */
 define('AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND', -1);
 define('AUTH_PREFMANAGER2_NOT_IMPLEMENTED', -2);
+define('AUTH_PREFMANAGER2_DB_NO_DSN', -3);
+define('AUTH_PREFMANAGER2_DB_CONNECT_FAILED', -4);
+define('AUTH_PREFMANAGER2_DB_QUERY_FAILED', -5);
 /**#@-*/
 
 /**
@@ -36,7 +39,10 @@ if (! isset($GLOBALS['_Auth_PrefManager2']['err'])) {
     $GLOBALS['_Auth_PrefManager2']['err'] = array(
         'en' => array(
             AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND => 'The container you requested could not be loaded.',
-            AUTH_PREFMANAGER2_NOT_IMPLEMENTED => 'This container doesn\'t implement this method.'
+            AUTH_PREFMANAGER2_NOT_IMPLEMENTED => 'This container doesn\'t implement this method.',
+            AUTH_PREFMANAGER2_DB_NO_DSN => 'You must provide a DSN to connect to.',
+            AUTH_PREFMANAGER2_DB_CONNECT_FAILED => 'A connection couldn\'t be established with the database.',
+            AUTH_PREFMANAGER2_DB_QUERY_FAILED => 'A database query failed.'
         )
     );
 }
@@ -201,10 +207,10 @@ class Auth_PrefManager2
         }
         
         if (!is_null($value = $this->_get($owner, $preference, $application))) {
-            return $this->_unprepare($value);
+            return $this->_decodeValue($value);
         } else {
             if ($returnDefaults && $options['return_defaults']) {
-                return $this->getDefaultPref($preference, $application);
+                return $this->getPref($preference, null, $application);
             }
         }
     }
@@ -230,7 +236,7 @@ class Auth_PrefManager2
             $application = $this->_options['default_app'];
         }
         
-        return $this->_set($owner, $preference, $this->_prepare($value), $application);
+        return $this->_set($owner, $preference, $this->_encodeValue($value), $application);
     }
     
     /**
@@ -309,6 +315,26 @@ class Auth_PrefManager2
     {
         $this->_throwError(AUTH_PREFMANAGER2_NOT_IMPLEMENTED);
         return false;
+    }
+    
+    /**
+     * Checks if the specified preference exists in the data container.
+     * This method should be overridden by container classes to do whatever
+     * needs doing.
+     *
+     * Returns null if an error occurs.
+     *
+     * @param string $owner The owner to delete the preference for.
+     * @param string $preference The name of the preference to delete.
+     * @param string $application The application to delete from.
+     * @return bool Does the pref exist?
+     * @access protected
+     * @abstract
+     */
+    function _exists($owner, $preference, $application)
+    {
+        $this->_throwError(AUTH_PREFMANAGER2_NOT_IMPLEMENTED);
+        return null;
     }
     
     /**
@@ -396,7 +422,7 @@ class Auth_PrefManager2
      * @return void
      * @access protected
      */
-    function _throwError($code, $level = 'error', $params = array())
+    function _throwError($code, $level = 'error', $params = array(), $repackage = null)
     {
         $locale = isset($this->_errorMessages['_Auth_PrefManager2'][$this->locale]) ? $this->locale : 'en';
         
