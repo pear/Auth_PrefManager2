@@ -18,23 +18,34 @@
 // $Id$
 
 /**
- * Auth_PrefManager2 test suite runner.
+ * Require the base class.
+ */
+require_once('Auth/PrefManager2.php');
+
+/**
+ * A mock container for testing the factory and singleton methods.
+ *
  * @author Jon Wood <jon@jellybob.co.uk>
  * @package Auth_PrefManager2
+ * @category Authentication
  * @version 0.1.0
  */
- 
-/**
- * Base class for unit tests.
- */
-require_once('simpletest/unit_tester.php');
-
-/**
- * Reporter output classes.
- */
-require_once('simpletest/reporter.php');
-
-$test = &new GroupTest('All tests');
-$test->addTestFile('CreationTests.php');
-$test->run(new TextReporter());
+class Auth_PrefManager2_Mock extends Auth_PrefManager2
+{
+    /**
+     * Constructor
+     *
+     * Applications should never call this constructor directly, instead 
+     * create a container with the factory method.
+     *
+     * @access protected
+     * @param array $options An associative array of options.
+     * @return void
+     * @see Auth_PrefManager2::&factory()
+     */
+    function Auth_PrefManager2_Mock($options = array())
+    {
+        $this->Auth_PrefManager2($options);
+    }
+}
 ?>
