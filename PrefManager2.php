@@ -30,12 +30,24 @@ define('AUTH_PREFMANAGER2_NOT_IMPLEMENTED', -2);
 /**#@-*/
 
 /**
+* Internationalised error messages
+*/
+if (! isset($GLOBALS['_Auth_PrefManager2']['err'])) {
+    $GLOBALS['_Auth_PrefManager2']['err'] = array(
+        'en' => array(
+            AUTH_PREFMANAGER2_CONTAINER_NOT_FOUND => 'The container you requested could not be loaded.',
+            AUTH_PREFMANAGER2_NOT_IMPLEMENTED => 'This container doesn\'t implement this method.'
+        )
+    );
+}
+
+/**
  * Auth_PrefManager allows you to store and retrieve preferences from
  * data containers, selecting the default value if none exists for the
  * user you have specified.
  *
  * @author Jon Wood <jon@jellybob.co.uk>
- * @author Paul M. Jones <pmjones@ciaweb.net
+ * @author Paul M. Jones <pmjones@ciaweb.net>
  * @package Auth_PrefManager2
  * @category Authentication
  * @version 0.1.0
@@ -76,20 +88,6 @@ class Auth_PrefManager2
      * @since 0.1.0
      */
     var $_errorStack = null;
-    
-    /**
-     * Error messages.
-     *
-     * @var array
-     * @access protected
-     * @since 0.1.0
-     * @todo Add an en_US translation :P
-     */
-    var $_errorMessages = array(
-        'en' => array(
-            
-        )
-    );
     
     /**
      * Constructor
@@ -183,8 +181,8 @@ class Auth_PrefManager2
     /**
      * Gets a preference for the specified owner and application.
      *
-     * @param string $owner The owner to retrieve the preference for.
      * @param string $preference The name of the preference to retrieve.
+     * @param string $owner The owner to retrieve the preference for.
      * @param string $application The application to retrieve from, if left as 
      *                            null the default application will be used.
      * @param bool $returnDefaults Should a default value be returned if no 
@@ -192,8 +190,12 @@ class Auth_PrefManager2
      * @return mixed|null The value, or null of no value was available.
      * @access public
      */
-    function getPref($owner, $preference, $application = null, $returnDefaults = true)
+    function getPref($preference, $owner = null, $application = null, $returnDefaults = true)
     {
+        if (is_null($owner)) {
+            $owner = $this->_options['default_owner'];
+        }
+        
         if (is_null($application)) {
             $application = $this->_options['default_app'];
         }
@@ -208,36 +210,22 @@ class Auth_PrefManager2
     }
     
     /**
-     * Gets the default value for the specified preference.
-     *
-     * @param string $preference The name of the preference to retrieve.
-     * @param string $application The application to retrieve from, if left as 
-     *                            null the default application will be used.
-     * @return mixed|null The value, or null of no value was available.
-     * @access public
-     */
-    function getDefaultPref($preference, $application = null)
-    {
-        if (is_null($application)) {
-            $application = $this->_options['default_app'];
-        }
-        
-        return $this->_unprepare($this->_get($this->_options['default_owner'], $preference, $application));
-    }
-    
-    /**
      * Sets a preference for the specified owner and application.
      *
-     * @param string $owner The owner to retrieve the preference for.
      * @param string $preference The name of the preference to retrieve.
      * @param mixed $value The value to set the preference to.
+     * @param string $owner The owner to retrieve the preference for.
      * @param string $application The application to retrieve from, if left as 
      *                            null the default application will be used.
      * @return bool Success/failure
      * @access public
      */
-    function setPref($owner, $preference, $value, $application = null)
+    function setPref($preference, $value, $owner = null, $application = null)
     {
+        if (is_null($owner)) {
+            $owner = $this->_options['default_owner'];
+        }
+        
         if (is_null($application)) {
             $application = $this->_options['default_app'];
         }
@@ -246,60 +234,26 @@ class Auth_PrefManager2
     }
     
     /**
-     * Gets the default value for the specified preference.
-     * 
-     * @param string $preference The name of the preference to set.
-     * @param mixed $value The value to set to.
-     * @param string $application The application to set for, if left as 
-     *                            null the default application will be used.
-     * @return mixed|null The value, or null of no value was available.
-     * @access public
-     */
-    function setDefaultPref($preference, $value, $application = null)
-    {
-        if (is_null($application)) {
-            $application = $this->_options['default_app'];
-        }
-        
-        return $this->_set($this->_options['default_owner'], $preference, $this->_prepare($value), $application);
-    }
-    
-    /**
      * Deletes a preference for the specified owner and application.
      *
-     * @param string $owner The owner to delete the preference for.
      * @param string $preference The name of the preference to delete.
+     * @param string $owner The owner to delete the preference for.
      * @param string $application The application to delete from, if left as 
      *                            null the default application will be used.
      * @return bool Success/failure
      * @access public
      */
-    function deletePref($owner, $preference, $application = null)
+    function deletePref($preference, $owner = null, $application = null)
     {
+        if (is_null($owner)) {
+            $owner = $this->_options['default_owner'];
+        }
+        
         if (is_null($application)) {
             $application = $this->_options['default_app'];
         }
         
         return $this->_delete($owner, $preference, $application = null);
-    }
-    
-    /**
-     * Deletes a preference for the default user.
-     *
-     * @param string $preference The preference to delete.
-     * @param string $application The application to delete from, if left as
-     *                            null the default application will be used.
-     * @return bool Success/failure
-     * @access public
-     */
-    function deleteDefaultPref($preference, $application = null)
-    {
-        if (is_null($application))
-        {
-            $application = $this->_options['default_app'];
-        }
-        
-        return $this->_delete($this->_options['default_owner'], $preference, $application);
     }
     
     /**
@@ -404,13 +358,13 @@ class Auth_PrefManager2
      */
     function _throwError($code, $level = 'error', $params = array())
     {
-        $locale = isset($this->_errorMessages[$this->locale]) ? $this->locale : 'en';
+        $locale = isset($this->_errorMessages['_Auth_PrefManager2'][$this->locale]) ? $this->locale : 'en';
         
         $this->_errorStack->push($code, 
                                  'notice',
                                  array('name' => $name,
                                        'value' => $value),
-                                 $this->_errorMessages[$locale][$code]);
+                                 $GLOBALS['_Auth_PrefManager2'][$locale][$code]);
     }
 }
 ?>
