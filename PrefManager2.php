@@ -39,21 +39,11 @@ if (!isset($GLOBALS['_Auth_PrefManager2']['err'])) {
  * @package Auth_PrefManager2
  * @category Authentication
  * @version 0.1.0
- * @abstract
+ * @static
  * @todo Add caching support.
- * @todo Write some containers.
  */
 class Auth_PrefManager2
-{
-    /**
-     * The PEAR_ErrorStack object to use for error handling.
-     *
-     * @var PEAR_ErrorStack
-     * @access protected
-     * @since 0.1.0
-     */
-    var $_errorStack = null;
-    
+{    
     /**
      * Creates an instance of PrefManager, with the options specified, and data
      * access being done by the specified container.
@@ -73,6 +63,10 @@ class Auth_PrefManager2
     {
         $class = "Auth_PrefManager2_Container_${container}";
         $file = "Auth/PrefManager2/Container/${container}.php";
+        
+        if (!isset($options['debug'])) {
+            $options['debug'] = false;
+        }
         
         if (class_exists($class)) {
             $obj =& new $class($options);
@@ -134,6 +128,7 @@ class Auth_PrefManager2
      * @param string $level The level of the error.
      * @param array $params Any other information to include with the error.
      * @return void
+     * @static
      * @access protected
      */
     function _throwError($code, $level = 'error', $params = array(), $repackage = null)
