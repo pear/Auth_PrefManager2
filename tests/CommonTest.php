@@ -17,10 +17,12 @@
 //
 // $Id$
 
+require_once 'PHPUnit/Autoload.php';
+
 /**
  * Require Auth_PrefManager2 for testing.
  */
-require_once('Auth/PrefManager2.php');
+require_once 'Auth/PrefManager2.php';
 
 /**
  * Test cases to ensure that the logic for returning default prefs if no
@@ -30,19 +32,8 @@ require_once('Auth/PrefManager2.php');
  * @package Auth_PrefManager2
  * @version 0.1.0
  */
-class CommonTests extends UnitTestCase
+class CommonTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * Constructor
-     * 
-     * @access public
-     * @return void
-     */
-    function CommonTests()
-    {
-        $this->UnitTestCase();
-    }
-    
     /**
      * Test the setting and retrieval of a basic preference.
      *
@@ -52,7 +43,6 @@ class CommonTests extends UnitTestCase
     function testUserPref()
     {
         $object =& Auth_PrefManager2::factory("Array");
-        
         $this->assertTrue($object->setPref('email', 'test@example.com', 'test'));
         $this->assertEqual($object->getPref('email', 'test'), 'test@example.com');
     }
@@ -66,7 +56,6 @@ class CommonTests extends UnitTestCase
     function testDefaultPref()
     {
         $object =& Auth_PrefManager2::factory("Array");
-        
         $this->assertTrue($object->setPref('email', 'test@example.com'));
         $this->assertEqual($object->getPref('email', 'test'), 'test@example.com');
     }
@@ -80,7 +69,6 @@ class CommonTests extends UnitTestCase
     function testApplicationPref()
     {
         $object =& Auth_PrefManager2::factory("Array");
-        
         $this->assertTrue($object->setPref('email', 'test@example.com', 'test'));
         $this->assertTrue($object->setPref('email', 'test-lists@example.com', 'test', 'mailinglist'));
         $this->assertEqual($object->getPref('email', 'test'), 'test@example.com');

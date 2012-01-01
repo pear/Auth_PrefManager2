@@ -17,25 +17,47 @@
 //
 // $Id$
 
+require_once 'PHPUnit/Autoload.php';
+
 /**
- * Auth_PrefManager2 test suite runner.
+ * Require Auth_PrefManager2 for testing.
+ */
+require_once 'Auth/PrefManager2.php';
+
+/**
+ * Test cases to ensure that the factory and singleton methods work.
+ *
  * @author Jon Wood <jon@jellybob.co.uk>
  * @package Auth_PrefManager2
  * @version 0.1.0
  */
- 
-/**
- * Base class for unit tests.
- */
-require_once('simpletest/unit_tester.php');
-
-/**
- * Reporter output classes.
- */
-require_once('simpletest/reporter.php');
-
-$test = &new GroupTest('All tests');
-$test->addTestFile('CreationTests.php');
-$test->addTestFile('CommonTests.php');
-$test->run(new TextReporter());
+class CreationTest extends PHPUnit_Framework_TestCase
+{
+    /**
+     * Test the factory method.
+     *
+     * @access public
+     * @return void
+     */
+    function testFactory()
+    {
+        $object =& Auth_PrefManager2::factory("Array");
+        $this->assertIsA($object, "Auth_PrefManager2_Container_Array");
+    }
+    
+    /**
+     * Test the factory method.
+     *
+     * @access public
+     * @return void
+     * @todo Switch to using a full container once one is done.
+     */
+    function testSingleton()
+    {
+        $object =& Auth_PrefManager2::singleton("Array");
+        $reference =& Auth_PrefManager2::singleton("Array");   
+        
+        $this->assertReference($object, $reference);
+    }
+}
 ?>
