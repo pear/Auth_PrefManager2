@@ -92,6 +92,9 @@ class Auth_PrefManager2
                           'error',
                           array('container' => $container,
                                 'options' => $options));
+        // "Only variable references should be returned by reference."
+        $bail = false;
+        return $obj;
     }
     
     /**
