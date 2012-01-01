@@ -1,7 +1,7 @@
 <?php
 require_once('Auth/PrefManager2/Container.php');
 
-class Auth_PrefManager2_Container_Mock extends Auth_PrefManager2_Container
+class Auth_PrefManager2_Container_Array extends Auth_PrefManager2_Container
 {
     var $_prefs = array();
     
