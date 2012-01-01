@@ -42,7 +42,7 @@ class CreationTest extends PHPUnit_Framework_TestCase
     function testFactory()
     {
         $object =& Auth_PrefManager2::factory("Array");
-        $this->assertIsA($object, "Auth_PrefManager2_Container_Array");
+        $this->assertInstanceOf("Auth_PrefManager2_Container_Array", $object);
     }
     
     /**
@@ -57,7 +57,7 @@ class CreationTest extends PHPUnit_Framework_TestCase
         $object =& Auth_PrefManager2::singleton("Array");
         $reference =& Auth_PrefManager2::singleton("Array");   
         
-        $this->assertReference($object, $reference);
+        $this->assertEquals($object, $reference);
     }
 }
 ?>

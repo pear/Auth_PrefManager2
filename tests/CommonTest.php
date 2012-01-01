@@ -44,7 +44,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
     {
         $object =& Auth_PrefManager2::factory("Array");
         $this->assertTrue($object->setPref('email', 'test@example.com', 'test'));
-        $this->assertEqual($object->getPref('email', 'test'), 'test@example.com');
+        $this->assertEquals($object->getPref('email', 'test'), 'test@example.com');
     }
     
     /**
@@ -57,7 +57,7 @@ class CommonTest extends PHPUnit_Framework_TestCase
     {
         $object =& Auth_PrefManager2::factory("Array");
         $this->assertTrue($object->setPref('email', 'test@example.com'));
-        $this->assertEqual($object->getPref('email', 'test'), 'test@example.com');
+        $this->assertEquals($object->getPref('email', 'test'), 'test@example.com');
     }
     
     /**
@@ -71,8 +71,8 @@ class CommonTest extends PHPUnit_Framework_TestCase
         $object =& Auth_PrefManager2::factory("Array");
         $this->assertTrue($object->setPref('email', 'test@example.com', 'test'));
         $this->assertTrue($object->setPref('email', 'test-lists@example.com', 'test', 'mailinglist'));
-        $this->assertEqual($object->getPref('email', 'test'), 'test@example.com');
-        $this->assertEqual($object->getPref('email', 'test', 'mailinglist'), 'test-lists@example.com');
+        $this->assertEquals($object->getPref('email', 'test'), 'test@example.com');
+        $this->assertEquals($object->getPref('email', 'test', 'mailinglist'), 'test-lists@example.com');
     }
 }
 ?>
